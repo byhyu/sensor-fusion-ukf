@@ -116,12 +116,6 @@ void UKF::ProcessMeasurement(MeasurementPackage meas_package) {
 
       float px = meas_package.raw_measurements_[0];
       float py = meas_package.raw_measurements_[1];
-        // very small px and py are can cause problems.
-        if ( fabs(px) < 0.001 || fabs(py) < 0.001 ) // <--- values are flexible
-        {
-            px = 0.01;  //  <--- values are flexible
-            py = 0.01;  //  <--- choose to satisfy rmse requirements
-        }
         x_ << px, py, 0.0, 0.0, 0.0; // px, py, v, phi, phi_dot
       P_<<std_laspx_*std_laspx_,0,0,0,0,
               0,std_laspy_*std_laspy_,0,0,0,
@@ -137,12 +131,7 @@ void UKF::ProcessMeasurement(MeasurementPackage meas_package) {
 
   double dt = (meas_package.timestamp_ - time_us_)/1000000.0;
     time_us_ = meas_package.timestamp_;
-    if (dt < 0) {
-        cout<< "WARNING!!! dt <0"<<endl;
-    }
-    if (dt > 0.2) {
-        cout<< "WARNING!!! dt > 0.2"<<endl;
-    }
+
   if (use_laser_ && meas_package.sensor_type_ == MeasurementPackage::LASER) {
     Prediction(dt);
     UpdateLidar(meas_package);
